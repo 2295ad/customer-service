@@ -1,42 +1,59 @@
-const {strapiConfig} = require("../../config/strapi.config");
-const axios = require('axios');
-require('dotenv');
+require("dotenv");
 
-const {CMS_TOKEN} = process.env;
-  
-  const getShopProducts = async (req, res, next) => {
-    try {
-      const gstin  = req.params['gstin'];
-      const result = await getShopId(gstin);
-      if (!result[0].length) {
-        res.send({ message: "Please enter valid gstin" });
-      }else{
-        const id = result[0][0].shop_id;
-        const data = await Promise.all([fetchMenuItems(id), fetchShopAddress(id)]);
-        const shopDetails = { menuItems: data[0][0], details: data[1][0][0] };
-        res.send({ shopDetails, message: "shop data" });
-      }
-    } catch (error) {
-      next(error);
+const { strapiConfig } = require("../../config/strapi.config");
+const {fetchMenuItems,fetchShopAddress} = require('../../models/shops');
+
+const {  STRAPI_URL } = process.env;
+
+
+const getShopProducts = async (req, res, next) => {
+  try {
+    const shopId = req.query["shopId"];
+    if (!shopId) {
+      res.status(400).send({message:'Please provide shop id'});
+    } else {
+      const data = await Promise.all([
+        fetchMenuItems(shopId),
+        fetchShopAddress(shopId),
+      ]);
+      const shopDetails = { menuItems: data[0][0], details: data[1][0][0] };
+      res.send({ shopDetails, message: "shop data" });
     }
-  };
-  
-  const getAllShops = async (_, res, next) => {
-    try {
-      const token = `Bearer ${CMS_TOKEN}`;
-      const result = await axios.get('http://185.210.144.38:1337/api/shops',{
-        headers:{Authorization:token}
-      });
-      // console.log(result.data);
-      // await strapiConfig.get('/api/content-type-builder/content-types');
-      res.send({ result: result.data, message: "shop data" });
-    } catch (error) {
-      next(error);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllShops = async (req, res, next) => {
+  try {
+    const shopDetails = req.client.get("shops");
+    if(shopDetails){
+      res.send({ result: JSON.parse(shopDetails), message: "shop data" });
+    }else{
+      const {data:result} = await strapiConfig.get("/api/shops?populate=*");
+      let responseData = result?.data?.map((ele)=>{
+        const {name,description,shop_id,discount,coupons} = ele?.attributes;
+        return {
+          name,
+          description,
+          shop_id,
+          discount,
+          coupons,
+          images:{
+            url:`${STRAPI_URL}${ele?.attributes?.images?.data?.[0]?.attributes?.url}`,
+            name: ele?.attributes?.images?.data?.[0]?.attributes?.name
+          }
+        }
+      })
+      req.client.set('shops',JSON.stringify(responseData));
+      res.send({ result: responseData, message: "shop data" });
     }
-  };
-  
-  module.exports = {
-    getShopProducts,
-    getAllShops,
-  };
-  
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getShopProducts,
+  getAllShops,
+};

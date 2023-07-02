@@ -5,7 +5,7 @@ const { getShopProducts, getAllShops } = require("../controllers/shops");
 
 const route = express.Router();
 
-route.get("/getShop/:id", getShopProducts);
+route.get("/", getShopProducts);
 route.get("/fetchList", getAllShops);
 
 module.exports = route;

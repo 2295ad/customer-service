@@ -1,16 +1,16 @@
-const axios = require('axios');
-require('dotenv');
+const axios = require("axios");
+require("dotenv");
 
-const {CMS_TOKEN} = process.env;
+const { CMS_TOKEN, STRAPI_URL } = process.env;
 
 const defaultConfig = {
-  baseUrl: 'http://185.210.144.38:1337',
-  headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+  baseURL: STRAPI_URL,
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
 };
 
 const configureRequestParams = (config) => {
   const token = `Bearer ${CMS_TOKEN}`;
-  config.headers && (config.headers['Authorization'] = token);
+  config.headers && (config.headers["Authorization"] = token);
   return config;
 };
 

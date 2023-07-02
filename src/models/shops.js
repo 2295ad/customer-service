@@ -27,7 +27,7 @@ const fetchShopAddress = async (shopId) => {
 const fetchMenuItems = async (shopId) => {
   try {
     const query =
-      "select menu.*, `catalog_price`.`price`, `catalog_price`.`gst_percent`, `catalog_price`.`discount_percent` from `menu` left join `catalog_price` on `catalog_price`.`menu_id` = `menu`.`menu_id` where `menu`.`shop_id` = ?";
+      "select menu.*, `catalog_price`.`price`, `catalog_price`.`gst_percent`, `catalog_price`.`discount_percent` from `menu` left join `catalog_price` on `catalog_price`.`menu_id` = `menu`.`menu_id` where `menu`.`shop_id` = ? order by category_id";
     const result = await pool.query(query, [shopId]);
     return result;
   } catch (error) {

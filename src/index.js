@@ -35,3 +35,4 @@ app.use((err, _, res, next) => {
 app.listen(port, () => {
   logger.info(`seller service started on ${port}`);
 });
+
