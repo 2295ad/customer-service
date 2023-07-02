@@ -7,9 +7,8 @@ const shops = require("./shops");
 
 const { verifyKey } = require("../helpers/verifyKey");
 
-const cacheService = new cache({stdTTL:0, checkperiod:0});
+const cacheService = new cache({ stdTTL: 0, checkperiod: 0 });
 const app = express.Router();
-
 
 app.use((req, res, next) => {
   req.client = cacheService;

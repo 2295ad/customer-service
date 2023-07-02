@@ -1,16 +1,15 @@
 require("dotenv");
 
 const { strapiConfig } = require("../../config/strapi.config");
-const {fetchMenuItems,fetchShopAddress} = require('../../models/shops');
+const { fetchMenuItems, fetchShopAddress } = require("../../models/shops");
 
-const {  STRAPI_URL } = process.env;
-
+const { STRAPI_URL } = process.env;
 
 const getShopProducts = async (req, res, next) => {
   try {
     const shopId = req.query["shopId"];
     if (!shopId) {
-      res.status(400).send({message:'Please provide shop id'});
+      res.status(400).send({ message: "Please provide shop id" });
     } else {
       const data = await Promise.all([
         fetchMenuItems(shopId),
@@ -27,25 +26,26 @@ const getShopProducts = async (req, res, next) => {
 const getAllShops = async (req, res, next) => {
   try {
     const shopDetails = req.client.get("shops");
-    if(shopDetails){
+    if (shopDetails) {
       res.send({ result: JSON.parse(shopDetails), message: "shop data" });
-    }else{
-      const {data:result} = await strapiConfig.get("/api/shops?populate=*");
-      let responseData = result?.data?.map((ele)=>{
-        const {name,description,shop_id,discount,coupons} = ele?.attributes;
+    } else {
+      const { data: result } = await strapiConfig.get("/api/shops?populate=*");
+      let responseData = result?.data?.map((ele) => {
+        const { name, description, shop_id, discount, coupons } =
+          ele?.attributes;
         return {
           name,
           description,
           shop_id,
           discount,
           coupons,
-          images:{
-            url:`${STRAPI_URL}${ele?.attributes?.images?.data?.[0]?.attributes?.url}`,
-            name: ele?.attributes?.images?.data?.[0]?.attributes?.name
-          }
-        }
-      })
-      req.client.set('shops',JSON.stringify(responseData));
+          images: {
+            url: `${STRAPI_URL}${ele?.attributes?.images?.data?.[0]?.attributes?.url}`,
+            name: ele?.attributes?.images?.data?.[0]?.attributes?.name,
+          },
+        };
+      });
+      req.client.set("shops", JSON.stringify(responseData));
       res.send({ result: responseData, message: "shop data" });
     }
   } catch (error) {
