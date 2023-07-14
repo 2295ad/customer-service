@@ -31,8 +31,14 @@ const getAllShops = async (req, res, next) => {
     } else {
       const { data: result } = await strapiConfig.get("/api/shops?populate=*");
       let responseData = result?.data?.map((ele) => {
-        const { name, description, shop_id, discount, coupons, availableCategories } =
-          ele?.attributes;
+        const {
+          name,
+          description,
+          shop_id,
+          discount,
+          coupons,
+          availableCategories,
+        } = ele?.attributes;
         return {
           name,
           description,
@@ -40,10 +46,12 @@ const getAllShops = async (req, res, next) => {
           discount,
           coupons,
           availableCategories,
-          ...(ele?.attributes?.images?.data?.[0]?.attributes?.url && {images: {
-            url: `${STRAPI_URL}${ele?.attributes?.images?.data?.[0]?.attributes?.url}`,
-            name: ele?.attributes?.images?.data?.[0]?.attributes?.name,
-          }}),
+          ...(ele?.attributes?.images?.data?.[0]?.attributes?.url && {
+            images: {
+              url: `${STRAPI_URL}${ele?.attributes?.images?.data?.[0]?.attributes?.url}`,
+              name: ele?.attributes?.images?.data?.[0]?.attributes?.name,
+            },
+          }),
         };
       });
       req.client.set("shops", JSON.stringify(responseData));

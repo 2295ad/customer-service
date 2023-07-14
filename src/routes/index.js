@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const { logger } = require("../utils/logger");
 const shops = require("./shops");
+const strapiHook = require("./strapiHook");
 
 const { verifyKey } = require("../helpers/verifyKey");
 
@@ -18,6 +19,7 @@ app.use((req, res, next) => {
 
 app.use(verifyKey);
 app.use("/shops", shops);
+app.use("/strapiHook",strapiHook);
 
 app.use("*", (req, res) => {
   logger.warn(`No route found - ${req.url}`);
