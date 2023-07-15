@@ -1,7 +1,7 @@
 require("dotenv");
 
 const { strapiConfig } = require("../../config/strapi.config");
-const { fetchMenuItems, fetchShopAddress } = require("../../models/shops");
+const { fetchMenuItems, fetchShopAddress,fetchCategory } = require("../../models/shops");
 
 const { STRAPI_URL } = process.env;
 
@@ -11,11 +11,24 @@ const getShopProducts = async (req, res, next) => {
     if (!shopId) {
       res.status(400).send({ message: "Please provide shop id" });
     } else {
+      const mapCategory = {};
       const data = await Promise.all([
         fetchMenuItems(shopId),
         fetchShopAddress(shopId),
+        fetchCategory()
       ]);
-      const shopDetails = { menuItems: data[0][0], details: data[1][0][0] };
+      const categories = data[2][0];
+      const menuItems = data[0][0];
+      categories.map((ele,_)=>mapCategory[ele.category_id]={type:ele.type,drinks:[]});
+      menuItems.map((menu,_)=>{
+        if(mapCategory[menu.category_id]){
+          mapCategory[menu.category_id].drinks.push(menu);
+        }
+      });
+      Object.keys(mapCategory).map((ele,_)=>{
+        if(!mapCategory[ele].drinks.length) delete mapCategory[ele];
+      })
+      const shopDetails = { details: data[1][0][0], categories:mapCategory };
       res.send({ shopDetails, message: "shop data" });
     }
   } catch (error) {

@@ -47,9 +47,21 @@ const fetchShops = async () => {
   }
 };
 
+const fetchCategory = async () => {
+  try {
+    const query = "select * from `category_type`";
+    const result = await pool.query(query);
+    return result;
+  } catch (error) {
+    logger.error(`Fetch operation failed for category :${error}`);
+    throw error;
+  }
+};
+
 module.exports = {
   getShopId,
   fetchShopAddress,
   fetchMenuItems,
   fetchShops,
+  fetchCategory,
 };
