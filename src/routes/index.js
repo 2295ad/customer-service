@@ -4,9 +4,12 @@ require("dotenv").config();
 
 const { logger } = require("../utils/logger");
 const shops = require("./shops");
-const strapiHook = require("./strapiHook");
+const cart = require("./cart");
+const order = require("./order");
 
-const { verifyKey } = require("../helpers/verifyKey");
+const strapiHook = require("./strapiHook");
+const {jwtVerify} = require('../helpers/jwtVerify');
+
 
 const cacheService = new cache({ stdTTL: 0, checkperiod: 0 });
 const app = express.Router();
@@ -17,9 +20,12 @@ app.use((req, res, next) => {
   return next();
 });
 
-app.use(verifyKey);
 app.use("/shops", shops);
 app.use("/strapiHook",strapiHook);
+//jwt verify
+// app.use(jwtVerify);
+app.use("/cart",cart);
+app.use("/orders",order);
 
 app.use("*", (req, res) => {
   logger.warn(`No route found - ${req.url}`);
@@ -27,16 +33,6 @@ app.use("*", (req, res) => {
   res.send("No route found");
 });
 
-//shut redisclient when app is closed
-process.on("SIGTERM", () => {
-  if (redisClient) {
-    redisClient.flushall((err, _) => {
-      if (!err) {
-        logger.info("Redis data flushed, when service is closed");
-      }
-    });
-    // redisClient.quit();
-  }
-});
+
 
 module.exports = app;
