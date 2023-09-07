@@ -1,7 +1,7 @@
 require("dotenv");
 
 const { strapiConfig } = require("../../config/strapi.config");
-const { fetchMenuItems, fetchShopAddress,fetchCategory } = require("../../models/shops");
+const { fetchMenuItems, fetchShopAddress,fetchCategory, fetchNearbyShops } = require("../../models/shops");
 
 const { STRAPI_URL } = process.env;
 
@@ -39,6 +39,8 @@ const getShopProducts = async (req, res, next) => {
 const getAllShops = async (req, res, next) => {
   try {
     const shopDetails = req.client.get("shops");
+    const getNearbyShops = await fetchNearbyShops(req.params.location);
+    
     if (shopDetails) {
       res.send({ result: JSON.parse(shopDetails), message: "shop data" });
     } else {

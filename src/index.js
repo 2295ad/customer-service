@@ -12,7 +12,7 @@ const { logger } = require("./utils/logger");
 const { errorHandler } = require("./helpers/errorHandler");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8003;
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 1000,

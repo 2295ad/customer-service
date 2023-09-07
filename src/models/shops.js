@@ -58,10 +58,22 @@ const fetchCategory = async () => {
   }
 };
 
+const fetchNearbyShops = async(point)=>{
+  try{
+    const query = "select `shop_id`, ( GLength( LineStringFromWKB( LineString( `location`, GeomFromText('POINT(?)') ) ) ) ) AS distance from address where shop_id is not null";
+    const result = await pool.query(query,[point]);
+    return result;
+  }catch(err){
+    logger.error(`Fetch nearby operation failed:${error}`);
+    throw error;
+  }
+}
+
 module.exports = {
   getShopId,
   fetchShopAddress,
   fetchMenuItems,
   fetchShops,
   fetchCategory,
+  fetchNearbyShops
 };
