@@ -39,7 +39,7 @@ const getShopProducts = async (req, res, next) => {
 const getAllShops = async (req, res, next) => {
   try {
     const shopDetails = req.client.get("shops");
-    const getNearbyShops = await fetchNearbyShops(req.params.location);
+    // const getNearbyShops = await fetchNearbyShops(req.params.location);
     
     if (shopDetails) {
       res.send({ result: JSON.parse(shopDetails), message: "shop data" });
