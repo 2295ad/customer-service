@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 app.use("/shops", shops);
 app.use("/strapiHook",strapiHook);
 //jwt verify
-// app.use(jwtVerify);
+app.use(jwtVerify);
 app.use("/cart",cart);
 app.use("/orders",order);
 

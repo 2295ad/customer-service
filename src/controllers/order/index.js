@@ -8,8 +8,8 @@ const confirmOrder = async(req,res,next)=>{
     try{
         // {shopId:1,items:{1:2,2:4,4:6}}
         const reqObj = req.body;
-        const existingCart = await checkCartExists(reqObj.id??12);
-        await deleteCart(reqObj.id??12);
+        const existingCart = await checkCartExists(reqObj.userId);
+        await deleteCart(reqObj.userId);
         existingCart[0][0].items = JSON.parse(existingCart[0][0].items); //parse stringified item
             
         const menuItems = [];
@@ -37,7 +37,7 @@ const confirmOrder = async(req,res,next)=>{
 const fetchOrders = async(req,res,next)=>{
     try{
         const reqObj = req.body;
-        const orders = await getHistoricalOrders(reqObj.id??12);
+        const orders = await getHistoricalOrders(reqObj.userId);
         orders[0].forEach((ele)=>ele.items=JSON.parse(ele.items));
         res.send({orders:orders[0]});
     }catch(err){

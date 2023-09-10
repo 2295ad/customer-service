@@ -30,7 +30,7 @@ const fetchLatestShops = async (req, res, next) => {
         }),
       };
     });
-    req.client.set("shops", JSON.stringify(responseData));
+    responseData?.forEach((ele)=>req.client.set(ele.shop_id,ele));
     res.send({ result: responseData, message: "shop data" });
   } catch (error) {
     next(error);

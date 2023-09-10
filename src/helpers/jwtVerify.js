@@ -11,6 +11,7 @@ const jwtVerify = (req, _, next) => {
                 throw new Error('Invalid Token');
             }else{
                 req.body.email = decoded.email;
+                req.body.userId = decoded.userId;
                 next()
             }
         })

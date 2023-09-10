@@ -6,7 +6,7 @@ const updateCart = async(req,res,next)=>{
     try{
         // {shopId:1,items:{1:{qty:2},2:{qty:4},4:{qty:6}}
         const reqObj = req.body;
-        const existingCart = await checkCartExists(reqObj.id??12); //check cart exists for different shop
+        const existingCart = await checkCartExists(reqObj.userId); //check cart exists for different shop
         if(existingCart[0].length && existingCart[0]?.[0].shop_id!==reqObj.shopId) return res.send({message:"Are you sure, you want to delete existing cart!"});
         //fetch price and tax of items
         const catalogueItems = await getCatalogueItems(Object.keys(reqObj.items));
@@ -39,7 +39,7 @@ const updateCart = async(req,res,next)=>{
 const fetchCart = async(req,res,next)=>{
     try{
         const reqObj = req.body;
-        const existingCart = await checkCartExists(reqObj?.id??12);
+        const existingCart = await checkCartExists(reqObj?.userId);
         if(existingCart[0].length){
             existingCart[0][0].items = JSON.parse(existingCart[0][0].items); //parse stringified item
             

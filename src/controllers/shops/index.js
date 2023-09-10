@@ -38,11 +38,16 @@ const getShopProducts = async (req, res, next) => {
 
 const getAllShops = async (req, res, next) => {
   try {
-    const shopDetails = req.client.get("shops");
-    // const getNearbyShops = await fetchNearbyShops(req.params.location);
-    
-    if (shopDetails) {
-      res.send({ result: JSON.parse(shopDetails), message: "shop data" });
+    const getNearbyShops = await fetchNearbyShops();
+    if (getNearbyShops[0]?.length && req.client.get(getNearbyShops[0]?.[0]?.shop_id)) {
+      const shopDetails = [];
+      getNearbyShops[0].forEach((ele)=>{
+        const tempDetails = req.client.get(ele.shop_id);
+        if(tempDetails){
+          shopDetails.push(tempDetails);
+        }
+      });
+      res.send({ result: shopDetails, message: "shop data" });
     } else {
       const { data: result } = await strapiConfig.get("/api/shops?populate=*");
       let responseData = result?.data?.map((ele) => {
@@ -69,7 +74,7 @@ const getAllShops = async (req, res, next) => {
           }),
         };
       });
-      req.client.set("shops", JSON.stringify(responseData));
+      responseData.forEach((ele)=> req.client.set(ele.shop_id,ele));
       res.send({ result: responseData, message: "shop data" });
     }
   } catch (error) {
