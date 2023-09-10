@@ -7,7 +7,7 @@ const updateCart = async(req,res,next)=>{
         // {shopId:1,items:{1:{qty:2},2:{qty:4},4:{qty:6}}
         const reqObj = req.body;
         const existigCart = await checkCartExists(reqObj.id??12); //check cart exists for different shop
-        if(existigCart[0].length && existigCart[0][0].shop_id!==reqObj.shopId) return res.send({message:"Are you sure, you want to delete existing cart!"});
+        if(existigCart[0].length && existigCart[0]?.[0].shop_id!==reqObj.shopId) return res.send({message:"Are you sure, you want to delete existing cart!"});
         //fetch price and tax of items
         const catalogueItems = await getCatalogueItems(Object.keys(reqObj.items));
         const menuNames = await getMenuDetails(Object.keys(reqObj.items));
