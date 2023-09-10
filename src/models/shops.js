@@ -58,9 +58,14 @@ const fetchCategory = async () => {
   }
 };
 
-const fetchNearbyShops = async(long=-73.109857,lat=7.107069)=>{
+const fetchNearbyShops = async(long,lat)=>{
   try{
-    const query = `SELECT shop_id, ST_Length(LineString(location, ST_GeomFromText('POINT(${lat} ${long})'))) AS distance FROM address WHERE shop_id IS NOT NULL order by distance`;
+    let query = "";
+    if(long && lat){
+       query = `SELECT shop_id, ST_Length(LineString(location, ST_GeomFromText('POINT(${lat} ${long})'))) AS distance FROM address WHERE shop_id IS NOT NULL order by distance`;
+    }else{
+       query = `SELECT shop_id FROM address WHERE shop_id IS NOT NULL`;
+    }
     const result = await pool.query(query);
     return result;
   }catch(err){
