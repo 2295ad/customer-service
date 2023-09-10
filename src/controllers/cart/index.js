@@ -25,7 +25,7 @@ const updateCart = async(req,res,next)=>{
             }
         });
         const insertModel = {id:reqObj.id,amount:total.toFixed(2),items:cartObject,shopId:reqObj.shopId};
-        if(existigCart[0][0].shop_id===reqObj.shopId){
+        if(existingCart[0]?.[0].shop_id==reqObj.shopId){
             await updateCartItems(insertModel)
         }else{
             await addToCart(insertModel);
