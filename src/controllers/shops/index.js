@@ -38,7 +38,8 @@ const getShopProducts = async (req, res, next) => {
 
 const getAllShops = async (req, res, next) => {
   try {
-    const getNearbyShops = await fetchNearbyShops();
+    const {lat,lng} = req.query;
+    const getNearbyShops = await fetchNearbyShops(Number(lng),Number(lat));
     if (getNearbyShops[0]?.length && req.client.get(getNearbyShops[0]?.[0]?.shop_id)) {
       const shopDetails = [];
       getNearbyShops[0].forEach((ele)=>{
@@ -74,7 +75,7 @@ const getAllShops = async (req, res, next) => {
           }),
         };
       });
-      responseData.forEach((ele)=> req.client.set(ele.shop_id,ele));
+      responseData.map((ele)=> req.client.set(ele.shop_id,ele));
       res.send({ result: responseData, message: "shop data" });
     }
   } catch (error) {
