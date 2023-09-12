@@ -18,10 +18,12 @@ const updateCart = async(req,res,next)=>{
                 const matchingElement = catalogueItems[0].find((elem)=>elem.menu_id==ele);
                 const menu = menuNames[0].find((elem)=>elem.menu_id==ele);
                 const qty = reqObj.items[ele].qty;
-                const price = matchingElement.price;
+                const gst = matchingElement.gst_percent/100;
+                const price = matchingElement.price + Number(matchingElement.price)*Number(gst);
                 const name = menu.item_name;
-                total += Number(qty)*Number(price);
-                cartObject.push({id:menu.menu_id,qty,price,name});
+                const elementPrice = Number(qty)*Number(price);
+                total += elementPrice;
+                cartObject.push({id:menu.menu_id,qty,price:elementPrice,name,gst});
             }
         });
         const insertModel = {id:reqObj.id,amount:total.toFixed(2),items:cartObject,shopId:reqObj.shopId};
